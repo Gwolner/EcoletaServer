@@ -9,7 +9,8 @@
 * ReactJS
 * React Native
 * Typescript
-
+* Knex
+* Sqlite
 
 ## Anotações
 
@@ -65,4 +66,21 @@ app.post("/users", (request,response)=>{
 
 
 app.listen(3333);
+```
+
+connection.ts
+```ts
+import knex from 'knex'; 
+import path from 'path'; //Usado para que o Node entenda caminhos (path)
+
+const connection = knex({
+    client: 'sqlite3',
+    connection: {
+        filename: path.resolve(__dirname, 'database.sqlite'), /*__dirname é uma variavel global que retorna 
+        o caminho da pasta que contem o arquivo que o chama. Neste caso, retorna database. O retorno é baseado
+        no S.O. então não se deve pasar o path diretamente.*/
+    }
+});
+
+export default connection;
 ```
