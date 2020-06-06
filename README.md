@@ -38,7 +38,7 @@ Install
 * ReactJS
 * React Native
 * Typescript
-* Knex
+* Knex http://knexjs.org/
 * Sqlite
 
 ## Anotações
@@ -270,8 +270,85 @@ routes.post("/points", async (request,response)=>{
 export default routes;
 ```
 
+PointsController.ts
+```ts
+import knex from '../database/connection';
+import {Request, Response} from 'express'; // Lê-se "Importar Request, Response de dentro do express"
+
+class PointController{
+    async create(request: Request, response: Response){ 
+
+        const {
+            name,
+            email,
+            whatsapp,
+            latitude,
+            longitude,
+            city,
+            uf,
+            items
+        } = request.body;
+    
+        const trx = await knex.transaction();
+    
+        const point = { 
+            image: "image-fake",
+            name,
+            email,
+            whatsapp,
+            latitude,
+            longitude,
+            city,
+            uf
+        }
+
+        const insertedIds = await trx('points').insert(point);
+    
+        const point_id = insertedIds[0];
+    
+        const pointItems = items.map((item_id: number) => {
+            return {
+                item_id,
+                point_id,
+            };
+        });
+    
+        await trx('point_items').insert(pointItems);
+    
+        return response.json({
+            id: point_id,
+            ...point
+            //Spread Operator: https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+        });
+    }
+}
+
+export default PointController;
+```
+
+(atualização)roter.ts
+```ts
+import express from 'express';
+import knex from './database/connection'; //Não é mais utilizado
+
+import PointsController from './controllers/pointsController';
+import ItemsController from './controllers/itemsController';
+
+// index, show, create, update, delete
+
+const routes = express.Router();
+const pointsController = new PointsController();
+const itemsController = new ItemsController();
+
+routes.get("/items", itemsController.index);
+
+routes.post("/points", pointsController.create);
 
 
+export default routes;
+
+//Dar uma olhada no que é Service pattern e Repositiry pattern.
+```
 
 
 
