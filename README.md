@@ -208,9 +208,23 @@ routes.get("/items", async (request,response)=>{ //Async porq mais abaixo usa-se
     return response.json(serializedItems);
 });
 
-routes.get("/points", async (request,response)=>{ 
+routes.get("/items", async (request,response)=>{ //Async porq mais abaixo usa-se um wait
 
-    const { //É o mesmo qeu fazer const name = request.body.name; const email = request.body.email; ... ; 
+    const items = await knex('items').select('*'); //Wait porq é um retorno que deve ser esperado sua concluir pra avançar
+
+    const serializedItems = items.map(item =>{
+        return {
+            id:item.id,
+            title: item.title,
+            imagem_url: `http://localhost:3333/uploads/${item.image}`,
+        };
+    }) 
+    return response.json(serializedItems);
+});
+
+routes.post("/points", async (request,response)=>{ 
+
+    const { //É o mesmo qeu fazer const name = request.body.name; const email = request.body.email; ... ;
         name,
         email,
         whatsapp,
@@ -218,21 +232,37 @@ routes.get("/points", async (request,response)=>{
         longitude,
         city,
         uf,
-        itens
+        items
     } = request.body;
 
-    await knex('points').insert({ /* Short Sintax: quando o nome da variável é igual ao nome da propriedade 
+    const trx = await knex.transaction(); /* Onde se tem trx era knex, porém a segunda transação não 
+    estava vinculada com a primeira. Em caso de falha, uma ocorreria sem a outra. */
+
+    const insertedIds = await trx('points').insert({ /* insert retorna o id criado. Como e uma única criação, 
+        so retorna um id para a constante ids. */
+        
+        /* Short Sintax: quando o nome da variável é igual ao nome da propriedade 
         do objeto, é possível omitir e usar desta forma. */
-        image: 'image-fake',
+        image: "image-fake",
         name,
         email,
         whatsapp,
         latitude,
         longitude,
         city,
-        uf,
-        itens
-    })
+        uf
+    });
+
+    const point_id = insertedIds[0]; // point_id contem o valor do id criado para point na função anterior.
+
+    const pointItems = items.map((item_id: number) => {
+        return {
+            item_id,
+            point_id,
+        };
+    });
+
+    await trx('point_items').insert(pointItems);
 
     return response.json({success: true});
 });
