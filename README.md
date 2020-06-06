@@ -350,8 +350,89 @@ export default routes;
 //Dar uma olhada no que é Service pattern e Repositiry pattern.
 ```
 
+controller/PointsControlle.create
+```ts
+import {Request, Response} from 'express'; // Lê-se "Importar Request, Response de dentro do express"
+import knex from '../database/connection';
 
+class PointsController{
+    async create(request: Request, response: Response){
+        const {
+            name,
+            email,
+            whatsapp,
+            latitude,
+            longitude,
+            city,
+            uf,
+            items
+        } = request.body;
+    
+        const trx = await knex.transaction();
+    
+        const point = {
+            image: "image-fake",
+            name,
+            email,
+            whatsapp,
+            latitude,
+            longitude,
+            city,
+            uf
+        }
 
+        const insertedIds = await trx('points').insert(point);
+        console.log("INSERTED ID :"+insertedIds);
+        const point_id = insertedIds[0];
+    
+        const pointItems = items.map((item_id: number) => {
+            return {
+                item_id,
+                point_id,
+            };
+        });
+    
+        await trx('point_items').insert(pointItems);
+
+        await trx.commit(); //Necessario pra garantir queocorra as transações!!
+
+        return response.json({
+            id: point_id,
+            ...point
+            //Spread Operator: https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+        });
+    }
+}
+
+export default PointsController;
+```
+
+controller/PointsControlle.show
+```ts
+ async show(request: Request, response: Response){
+        const { id } = request.params; // É o mesmo que const id = request.params.id;
+
+        const point = await knex('points').where('id', id).first(); 
+        //Retorna um unico registro mesmo o ID sendo unico pois sem o first(), poimnt espera um array;
+
+        if(!point){
+            return response.status(400).json({ message: "Point not found."});
+        }
+
+        const items = await knex('items')
+            .join('point_items', 'items.id', '=', 'point_items.item_id')
+            .where('point_items.point_id',id)
+        /*Equivalente a:
+          SELECT * FROM items
+            JOIN point_items ON items.id = point_items.item_id
+            WHERE point_items.point_id = {id}
+          Retorna todos os items relacionados a este point que foi consultado.
+        */   .select('items.title');
+
+        return response.json({point, items});
+
+    }
+```
 
 
 
