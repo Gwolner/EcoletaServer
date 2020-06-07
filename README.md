@@ -433,8 +433,29 @@ controller/PointsControlle.show
 
     }
 ```
+controller/PointsControlle.index
+```ts
+async index(request: Request, response: Response){
 
+        const { city, uf, items } = request.query;
 
+        const parsedItems = String(items)
+            .split(",")
+            .map(item => Number(item.trim()));
+        /*o split separa o que ta entre "," o mapa realiza a ação pra cada 
+        item e o trim() apaga os espaços na direita ou esquerda de cada item. */
+
+        const points = await knex('points')
+            .join('point_items', 'points.id', '=', 'point_items.point_id')
+            .whereIn('point_items.item_id', parsedItems)
+            .where('city', String(city)) //Sempre recebe pelo Query é bom informar o formato, neste caso, String! 
+            .where('uf', String(uf))
+            .distinct() // Evita duplicidade de retorno: [1][2][1,2] etc
+            .select('points.*');
+
+        return response.json(points);
+    }
+```
 
 
 
