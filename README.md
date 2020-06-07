@@ -14,6 +14,11 @@ Para rodar o seed
 * ts-node-dev --transpileOnly --ignore-watch node_modules src/server.ts
 (atualziação de comando: agora ignora os modulos do nodejs que não iremos manipular, só consumir)
 
+* npm install cors 
+Instala o CORS que trata de controle de acesso url para a aplicação
+
+* npm install @types/cors -D
+Para que o typescript entenda o typo do cors
 
 
 VSCode
@@ -41,7 +46,12 @@ Install
 * Knex http://knexjs.org/
 * Sqlite
 
-## Anotações
+## Anotações de conceitos
+
+CORS = Define na API quais endereços externos vão ter acesso pra aplicação. Define quais URL web vão ter acesso a API.
+
+
+## Anotações de códigos
 
 server.ts
 ```ts
