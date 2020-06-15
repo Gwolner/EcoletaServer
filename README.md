@@ -4,7 +4,32 @@
 
 ## Comandos
 
-terminal
+* npm install ts-node -D
+Faz com que o Node, que só conhece JS, entenda TS tambem.
+
+* npx
+executa um pacote que foi instalado.
+
+* npx ts-node src/server.ts 
+inicia o servidor/API
+
+* npm install typescript -D
+instala o TS.
+
+* npx tsc --init
+Cria arquivo de configuração do TS.
+
+* npm install ts-node-dev -D
+Evita ter de dr ctrl+c para parar p serviço a cada mudança de código.
+A cada nova atualização, o servidor se reinicia sozinho.
+
+* npm install knex
+Usa JS para manipular o BD, permitindo mudar de um BD para outro sem ter de mudar a linguagem utilizada.
+Ex: Mudar SQL pra Postgress.
+
+* npm install sqlite3
+Instala o arquivo que será usado como BD.
+
 * npx knex --knexfile knexfile.ts migrate:latest
 Para o knex rodar as migrations
 
@@ -21,8 +46,8 @@ Instala o CORS que trata de controle de acesso url para a aplicação
 Para que o typescript entenda o typo do cors
 
 
-VSCode
-* ctrl + shift + p, open keybord shortcuts)
+## Atalho VSCode
+* ctrl + shift + p, open keybord shortcuts.
 copy line down (copiar linha pra baixo)
 
 ## Usados
@@ -37,7 +62,7 @@ Web service
 * whimsical.com (criar fluxograma)
 * notion.so (anotações e controle de informação)
 
-Install
+Instalados
 * Insomnia
 * NodeJS
 * ReactJS
@@ -46,8 +71,6 @@ Install
 * Knex http://knexjs.org/
 * Sqlite
 
-## Anotações de conceitos
+## Conceitos
 
 CORS = Define na API quais endereços externos vão ter acesso pra aplicação. Define quais URL web vão ter acesso a API.
-
-## Pesquisar para saber
