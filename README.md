@@ -74,3 +74,4 @@ Instalados
 ## Conceitos
 
 CORS = Define na API quais endereços externos vão ter acesso pra aplicação. Define quais URL web vão ter acesso a API.
+Live Reload = Atualização automática da aplicação sempre que o código sofre alteração.
